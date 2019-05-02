@@ -316,6 +316,45 @@ rmaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 }
 
 static ERL_NIF_TERM
+mvaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    AUGEAS* res;
+    char src[MAXBUFLEN];
+    char dst[MAXBUFLEN];
+    int aug_result = 0;
+
+    if(argc != 3)
+    {
+        return enif_make_badarg(env);
+    }
+
+    (void)memset(&src, '\0', sizeof(src));
+    (void)memset(&dst, '\0', sizeof(dst));
+
+    if(!enif_get_resource(env, argv[0], RES_TYPE, (void **) &res))
+    {
+        return enif_make_badarg(env);
+    }
+
+    if (enif_get_string(env, argv[1], src, sizeof(src), ERL_NIF_LATIN1) < 1)
+    {
+        return enif_make_badarg(env);
+    }
+
+    if (enif_get_string(env, argv[2], dst, sizeof(dst), ERL_NIF_LATIN1) < 1)
+    {
+        return enif_make_badarg(env);
+    }
+
+    aug_result = aug_mv(res->aug, src, dst);
+    if (aug_result == 0) {
+        return mk_atom(env, "ok");
+    }
+
+    return mk_error(env, "mv_error");
+}
+
+static ERL_NIF_TERM
 saveaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     AUGEAS *res;
@@ -371,6 +410,7 @@ static ErlNifFunc nif_funcs[] = {
     {"setm", 4, setmaugeas},
     {"match", 2, matchaugeas},
     {"rm", 2, rmaugeas},
+    {"mv", 3, mvaugeas},
     {"save", 1, saveaugeas, ERL_NIF_DIRTY_JOB_IO_BOUND},
     {"close", 1, closeaugeas}
 };

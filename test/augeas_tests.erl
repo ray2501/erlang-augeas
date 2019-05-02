@@ -24,6 +24,13 @@ rm_test() ->
     ?assertNotEqual(0, augeas:rm(R, "/test")),
     augeas:close(R).
 
+mv_test() ->
+    {ok, R} = augeas:new("/", "", 0),
+    ?assertEqual(ok, augeas:set(R, "/test/value/0", "0")),
+    ?assertEqual(ok, augeas:mv(R, "/test/value/0", "/test/value/1")),
+    ?assertEqual("0", augeas:get(R, "/test/value/1")),
+    augeas:close(R).
+
 match_test() ->
     {ok, R} = augeas:new("/", "", 0),
     MList = augeas:match(R, "/files/etc/hosts/*"),

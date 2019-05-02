@@ -6,7 +6,7 @@
 
 %% API exports
 -export([new/3, get/2, set/3, setm/4, rm/2]).
--export([match/2, save/1, close/1]).
+-export([mv/3, match/2, save/1, close/1]).
 -on_load(init/0).
 
 -define(APPNAME, augeas).
@@ -39,6 +39,11 @@ setm(_, _, _, _) ->
 %% @doc Remove path and all its children
 
 rm(_, _) ->
+    not_loaded(?LINE).
+
+%% @doc Move the node SRC to DST
+
+mv(_, _, _) ->
     not_loaded(?LINE).
 
 %% @doc the number of matches of the path expression PATH in AUG
