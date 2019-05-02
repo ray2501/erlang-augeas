@@ -1,0 +1,14 @@
+{application, augeas,
+ [{description, "Erlang bindings for Augeas"},
+  {vsn, "0.0.0"},
+  {registered, []},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {licenses, ["MIT"]},
+  {links, ["https://github.com/ray2501/erlang-augeas"]}
+ ]}.
