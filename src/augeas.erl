@@ -5,7 +5,8 @@
 -module(augeas).
 
 %% API exports
--export([new/3, get/2, set/3, save/1, close/1]).
+-export([new/3, get/2, set/3, match/2, save/1]).
+-export([close/1]).
 -on_load(init/0).
 
 -define(APPNAME, augeas).
@@ -28,6 +29,11 @@ get(_, _) ->
 %% @doc Set the value associated with PATH to VALUE
 
 set(_, _, _) ->
+    not_loaded(?LINE).
+
+%% @doc the number of matches of the path expression PATH in AUG
+
+match(_, _) ->
     not_loaded(?LINE).
 
 %% @doc Write all pending changes to disk

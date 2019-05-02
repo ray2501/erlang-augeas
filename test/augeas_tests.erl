@@ -11,6 +11,12 @@ get_test() ->
     ?assertEqual("0", augeas:get(R, "/test/value")),
     augeas:close(R).
 
+match_test() ->
+    {ok, R} = augeas:new("/", "", 0),
+    MList = augeas:match(R, "/files/etc/hosts/*"),
+    ?assertNotEqual(0, length(MList)),
+    augeas:close(R).
+
 save_test() ->
     {ok, R} = augeas:new("/", "", 0),
     ?assertEqual(ok, augeas:save(R)),
