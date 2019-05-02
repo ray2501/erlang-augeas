@@ -5,8 +5,8 @@
 -module(augeas).
 
 %% API exports
--export([new/3, get/2, set/3, setm/4, match/2]).
--export([save/1, close/1]).
+-export([new/3, get/2, set/3, setm/4, rm/2]).
+-export([match/2, save/1, close/1]).
 -on_load(init/0).
 
 -define(APPNAME, augeas).
@@ -34,6 +34,11 @@ set(_, _, _) ->
 %% @doc Set the value of multiple nodes in one operation
 
 setm(_, _, _, _) ->
+    not_loaded(?LINE).
+
+%% @doc Remove path and all its children
+
+rm(_, _) ->
     not_loaded(?LINE).
 
 %% @doc the number of matches of the path expression PATH in AUG

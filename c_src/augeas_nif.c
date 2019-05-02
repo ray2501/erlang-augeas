@@ -226,7 +226,7 @@ setmaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         return enif_make_int(env, aug_result);
     }
 
-    return mk_error(env, "set_error");
+    return mk_error(env, "setm_error");
 }
 
 static ERL_NIF_TERM
@@ -272,15 +272,47 @@ matchaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
                     erl_list = enif_make_list_cell(env,
                                                    enif_make_string(env, "", ERL_NIF_LATIN1),
                                                    erl_list);
-		}
+                }
             }
         }
         free(matches);
 
-	return erl_list;
+        return erl_list;
     }
 
     return mk_error(env, "match_error");
+}
+
+static ERL_NIF_TERM
+rmaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    AUGEAS* res;
+    char path[MAXBUFLEN];
+    int aug_result = 0;
+
+    if(argc != 2)
+    {
+        return enif_make_badarg(env);
+    }
+
+    (void)memset(&path, '\0', sizeof(path));
+
+    if(!enif_get_resource(env, argv[0], RES_TYPE, (void **) &res))
+    {
+        return enif_make_badarg(env);
+    }
+
+    if (enif_get_string(env, argv[1], path, sizeof(path), ERL_NIF_LATIN1) < 1)
+    {
+        return enif_make_badarg(env);
+    }
+
+    aug_result = aug_rm(res->aug, path);
+    if (aug_result >= 0) {
+        return enif_make_int(env, aug_result);
+    }
+
+    return mk_error(env, "rm_error");
 }
 
 static ERL_NIF_TERM
@@ -338,6 +370,7 @@ static ErlNifFunc nif_funcs[] = {
     {"set", 3, setaugeas},
     {"setm", 4, setmaugeas},
     {"match", 2, matchaugeas},
+    {"rm", 2, rmaugeas},
     {"save", 1, saveaugeas, ERL_NIF_DIRTY_JOB_IO_BOUND},
     {"close", 1, closeaugeas}
 };
