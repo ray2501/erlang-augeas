@@ -132,6 +132,10 @@ getaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         return enif_make_badarg(env);
     }
 
+    if(res->aug == NULL) {
+        return mk_error(env, "resource_error");
+    }
+
     aug_result = aug_get(res->aug, path, &value);
     if (aug_result == 1) {
         if(!value) {
@@ -175,6 +179,10 @@ setaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         return enif_make_badarg(env);
     }    
     
+    if(res->aug == NULL) {
+        return mk_error(env, "resource_error");
+    }
+
     aug_result = aug_set(res->aug, path, value);
     if (aug_result == 0) {
         return mk_atom(env, "ok");
@@ -221,6 +229,10 @@ setmaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         return enif_make_badarg(env);
     }
 
+    if(res->aug == NULL) {
+        return mk_error(env, "resource_error");
+    }
+
     aug_result = aug_setm(res->aug, base, sub, value);
     if (aug_result > 0) {
         return enif_make_int(env, aug_result);
@@ -254,6 +266,10 @@ matchaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     if (enif_get_string(env, argv[1], path, sizeof(path), ERL_NIF_LATIN1) < 1)
     {
         return enif_make_badarg(env);
+    }
+
+    if(res->aug == NULL) {
+        return mk_error(env, "resource_error");
     }
 
     aug_result = aug_match(res->aug, path, &matches);
@@ -307,6 +323,10 @@ rmaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         return enif_make_badarg(env);
     }
 
+    if(res->aug == NULL) {
+        return mk_error(env, "resource_error");
+    }
+
     aug_result = aug_rm(res->aug, path);
     if (aug_result >= 0) {
         return enif_make_int(env, aug_result);
@@ -346,12 +366,59 @@ mvaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         return enif_make_badarg(env);
     }
 
+    if(res->aug == NULL) {
+        return mk_error(env, "resource_error");
+    }
+
     aug_result = aug_mv(res->aug, src, dst);
     if (aug_result == 0) {
         return mk_atom(env, "ok");
     }
 
     return mk_error(env, "mv_error");
+}
+
+static ERL_NIF_TERM
+cpaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    AUGEAS* res;
+    char src[MAXBUFLEN];
+    char dst[MAXBUFLEN];
+    int aug_result = 0;
+
+    if(argc != 3)
+    {
+        return enif_make_badarg(env);
+    }
+
+    (void)memset(&src, '\0', sizeof(src));
+    (void)memset(&dst, '\0', sizeof(dst));
+
+    if(!enif_get_resource(env, argv[0], RES_TYPE, (void **) &res))
+    {
+        return enif_make_badarg(env);
+    }
+
+    if (enif_get_string(env, argv[1], src, sizeof(src), ERL_NIF_LATIN1) < 1)
+    {
+        return enif_make_badarg(env);
+    }
+
+    if (enif_get_string(env, argv[2], dst, sizeof(dst), ERL_NIF_LATIN1) < 1)
+    {
+        return enif_make_badarg(env);
+    }
+
+    if(res->aug == NULL) {
+        return mk_error(env, "resource_error");
+    }
+
+    aug_result = aug_cp(res->aug, src, dst);
+    if (aug_result == 0) {
+        return mk_atom(env, "ok");
+    }
+
+    return mk_error(env, "cp_error");
 }
 
 static ERL_NIF_TERM
@@ -411,6 +478,7 @@ static ErlNifFunc nif_funcs[] = {
     {"match", 2, matchaugeas},
     {"rm", 2, rmaugeas},
     {"mv", 3, mvaugeas},
+    {"cp", 3, cpaugeas},
     {"save", 1, saveaugeas, ERL_NIF_DIRTY_JOB_IO_BOUND},
     {"close", 1, closeaugeas}
 };
