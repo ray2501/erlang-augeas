@@ -283,10 +283,6 @@ insertaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     }
 
     aug_result = aug_insert(res->aug, path, label, before);
-    if (aug_result > 0) {
-        return enif_make_int(env, aug_result);
-    }
-
     if (aug_result == 0) {
         return mk_atom(env, "ok");
     }
