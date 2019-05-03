@@ -234,7 +234,7 @@ setmaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     }
 
     aug_result = aug_setm(res->aug, base, sub, value);
-    if (aug_result > 0) {
+    if (aug_result >= 0) {
         return enif_make_int(env, aug_result);
     }
 
