@@ -34,16 +34,11 @@ mk_error(ErlNifEnv* env, const char* mesg)
     return enif_make_tuple2(env, mk_atom(env, "error"), mk_atom(env, mesg));
 }
 
-static void
-free_res(ErlNifEnv* env, void* obj)
-{
-}
-
 static int
 load(ErlNifEnv* env, void** priv, ERL_NIF_TERM load_info)
 {
-    ErlNifResourceType* rt = enif_open_resource_type(env, "augeas", "augeas_res", 
-                                                     free_res,
+    ErlNifResourceType* rt = enif_open_resource_type(env, NULL, "augeas_res", 
+                                                     NULL,
                                                      ERL_NIF_RT_CREATE, NULL);    
 
     if(rt == NULL) return -1;
