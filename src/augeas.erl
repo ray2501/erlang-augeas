@@ -6,8 +6,8 @@
 
 %% API exports
 -export([new/3, get/2, set/3, setm/4, insert/4]).
--export([rm/2, mv/3, cp/3, match/2, save/1]).
--export([close/1]).
+-export([rm/2, mv/3, cp/3, rename/3, match/2]).
+-export([save/1, close/1]).
 -on_load(init/0).
 
 -define(APPNAME, augeas).
@@ -55,6 +55,11 @@ mv(_, _, _) ->
 %% @doc Copy the node SRC to DST
 
 cp(_, _, _) ->
+    not_loaded(?LINE).
+
+%% @doc Rename the label of all nodes matching SRC to LBL
+
+rename(_, _, _) ->
     not_loaded(?LINE).
 
 %% @doc the number of matches of the path expression PATH in AUG

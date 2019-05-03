@@ -417,6 +417,49 @@ cpaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 }
 
 static ERL_NIF_TERM
+renameaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    AUGEAS* res;
+    char src[MAXBUFLEN];
+    char lbl[MAXBUFLEN];
+    int aug_result = 0;
+
+    if(argc != 3)
+    {
+        return enif_make_badarg(env);
+    }
+
+    (void)memset(&src, '\0', sizeof(src));
+    (void)memset(&lbl, '\0', sizeof(lbl));
+
+    if(!enif_get_resource(env, argv[0], RES_TYPE, (void **) &res))
+    {
+        return enif_make_badarg(env);
+    }
+
+    if (enif_get_string(env, argv[1], src, sizeof(src), ERL_NIF_LATIN1) < 1)
+    {
+        return enif_make_badarg(env);
+    }
+
+    if (enif_get_string(env, argv[2], lbl, sizeof(lbl), ERL_NIF_LATIN1) < 1)
+    {
+        return enif_make_badarg(env);
+    }
+
+    if(res->aug == NULL) {
+        return mk_error(env, "resource_error");
+    }
+
+    aug_result = aug_rename(res->aug, src, lbl);
+    if (aug_result >= 0) {
+        return enif_make_int(env, aug_result);
+    }
+
+    return mk_error(env, "rename_error");
+}
+
+static ERL_NIF_TERM
 matchaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     AUGEAS* res;
@@ -532,6 +575,7 @@ static ErlNifFunc nif_funcs[] = {
     {"rm", 2, rmaugeas},
     {"mv", 3, mvaugeas},
     {"cp", 3, cpaugeas},
+    {"rename", 3, renameaugeas},
     {"match", 2, matchaugeas},
     {"save", 1, saveaugeas, ERL_NIF_DIRTY_JOB_IO_BOUND},
     {"close", 1, closeaugeas}
