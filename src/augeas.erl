@@ -5,8 +5,9 @@
 -module(augeas).
 
 %% API exports
--export([new/3, get/2, set/3, setm/4, rm/2]).
--export([mv/3, cp/3, match/2, save/1, close/1]).
+-export([new/3, get/2, set/3, setm/4, insert/4]).
+-export([rm/2, mv/3, cp/3, match/2, save/1]).
+-export([close/1]).
 -on_load(init/0).
 
 -define(APPNAME, augeas).
@@ -34,6 +35,11 @@ set(_, _, _) ->
 %% @doc Set the value of multiple nodes in one operation
 
 setm(_, _, _, _) ->
+    not_loaded(?LINE).
+
+%% @doc Create a new sibling LABEL for PATH by inserting into the tree
+
+insert(_, _, _, _) ->
     not_loaded(?LINE).
 
 %% @doc Remove path and all its children

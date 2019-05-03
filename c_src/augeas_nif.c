@@ -242,6 +242,59 @@ setmaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 }
 
 static ERL_NIF_TERM
+insertaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    AUGEAS* res;
+    char path[MAXBUFLEN];
+    char label[MAXBUFLEN];
+    int before = 0;
+    int aug_result = 0;
+
+    if(argc != 4)
+    {
+        return enif_make_badarg(env);
+    }
+
+    (void)memset(&path, '\0', sizeof(path));
+    (void)memset(&label, '\0', sizeof(label));
+
+    if(!enif_get_resource(env, argv[0], RES_TYPE, (void **) &res))
+    {
+        return enif_make_badarg(env);
+    }
+
+    if (enif_get_string(env, argv[1], path, sizeof(path), ERL_NIF_LATIN1) < 1)
+    {
+        return enif_make_badarg(env);
+    }
+
+    if (enif_get_string(env, argv[2], label, sizeof(label), ERL_NIF_LATIN1) < 1)
+    {
+        return enif_make_badarg(env);
+    }
+
+    if (!enif_get_int(env, argv[3], &before))
+    {
+        return enif_make_badarg(env);
+    }
+
+    if(res->aug == NULL) {
+        return mk_error(env, "resource_error");
+    }
+
+    aug_result = aug_insert(res->aug, path, label, before);
+    if (aug_result > 0) {
+        return enif_make_int(env, aug_result);
+    }
+
+    if (aug_result == 0) {
+        return mk_atom(env, "ok");
+    }
+
+    return mk_error(env, "insert_error");
+}
+
+static ERL_NIF_TERM
 rmaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     AUGEAS* res;
@@ -475,6 +528,7 @@ static ErlNifFunc nif_funcs[] = {
     {"get", 2, getaugeas},
     {"set", 3, setaugeas},
     {"setm", 4, setmaugeas},
+    {"insert", 4, insertaugeas},
     {"rm", 2, rmaugeas},
     {"mv", 3, mvaugeas},
     {"cp", 3, cpaugeas},
