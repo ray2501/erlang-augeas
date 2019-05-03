@@ -242,64 +242,6 @@ setmaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 }
 
 static ERL_NIF_TERM
-matchaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
-{
-    AUGEAS* res;
-    char path[MAXBUFLEN];
-    char** matches = NULL;
-    int aug_result = 0;
-    ERL_NIF_TERM erl_list;
-    int i = 0;
-
-    if(argc != 2)
-    {
-        return enif_make_badarg(env);
-    }
-
-    (void)memset(&path, '\0', sizeof(path));
-
-    if(!enif_get_resource(env, argv[0], RES_TYPE, (void **) &res))
-    {
-        return enif_make_badarg(env);
-    }
-
-    if (enif_get_string(env, argv[1], path, sizeof(path), ERL_NIF_LATIN1) < 1)
-    {
-        return enif_make_badarg(env);
-    }
-
-    if(res->aug == NULL) {
-        return mk_error(env, "resource_error");
-    }
-
-    aug_result = aug_match(res->aug, path, &matches);
-    if (aug_result >= 0) {
-        erl_list = enif_make_list(env, 0);
-
-        if (aug_result > 0) {
-            for (i = 0; i < aug_result; i++)
-            {
-                if(matches[i]) {
-                    erl_list = enif_make_list_cell(env,
-                                                   enif_make_string(env, matches[i], ERL_NIF_LATIN1),
-                                                   erl_list);
-                    free(matches[i]);
-                } else {
-                    erl_list = enif_make_list_cell(env,
-                                                   enif_make_string(env, "", ERL_NIF_LATIN1),
-                                                   erl_list);
-                }
-            }
-        }
-        free(matches);
-
-        return erl_list;
-    }
-
-    return mk_error(env, "match_error");
-}
-
-static ERL_NIF_TERM
 rmaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     AUGEAS* res;
@@ -422,6 +364,64 @@ cpaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 }
 
 static ERL_NIF_TERM
+matchaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
+{
+    AUGEAS* res;
+    char path[MAXBUFLEN];
+    char** matches = NULL;
+    int aug_result = 0;
+    ERL_NIF_TERM erl_list;
+    int i = 0;
+
+    if(argc != 2)
+    {
+        return enif_make_badarg(env);
+    }
+
+    (void)memset(&path, '\0', sizeof(path));
+
+    if(!enif_get_resource(env, argv[0], RES_TYPE, (void **) &res))
+    {
+        return enif_make_badarg(env);
+    }
+
+    if (enif_get_string(env, argv[1], path, sizeof(path), ERL_NIF_LATIN1) < 1)
+    {
+        return enif_make_badarg(env);
+    }
+
+    if(res->aug == NULL) {
+        return mk_error(env, "resource_error");
+    }
+
+    aug_result = aug_match(res->aug, path, &matches);
+    if (aug_result >= 0) {
+        erl_list = enif_make_list(env, 0);
+
+        if (aug_result > 0) {
+            for (i = 0; i < aug_result; i++)
+            {
+                if(matches[i]) {
+                    erl_list = enif_make_list_cell(env,
+                                                   enif_make_string(env, matches[i], ERL_NIF_LATIN1),
+                                                   erl_list);
+                    free(matches[i]);
+                } else {
+                    erl_list = enif_make_list_cell(env,
+                                                   enif_make_string(env, "", ERL_NIF_LATIN1),
+                                                   erl_list);
+                }
+            }
+        }
+        free(matches);
+
+        return erl_list;
+    }
+
+    return mk_error(env, "match_error");
+}
+
+static ERL_NIF_TERM
 saveaugeas(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
     AUGEAS *res;
@@ -475,10 +475,10 @@ static ErlNifFunc nif_funcs[] = {
     {"get", 2, getaugeas},
     {"set", 3, setaugeas},
     {"setm", 4, setmaugeas},
-    {"match", 2, matchaugeas},
     {"rm", 2, rmaugeas},
     {"mv", 3, mvaugeas},
     {"cp", 3, cpaugeas},
+    {"match", 2, matchaugeas},
     {"save", 1, saveaugeas, ERL_NIF_DIRTY_JOB_IO_BOUND},
     {"close", 1, closeaugeas}
 };
