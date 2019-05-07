@@ -72,7 +72,7 @@ rename(_, _, _) ->
     not_loaded(?LINE).
 
 %% @doc the number of matches of the path expression PATH in AUG
--spec match(Aug::reference(), Path::string()) -> list(string) | {error, any()}.
+-spec match(Aug::reference(), Path::string()) -> list(string()) | {error, any()}.
 
 match(_, _) ->
     not_loaded(?LINE).
