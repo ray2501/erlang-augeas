@@ -18,6 +18,7 @@ BuildRequires:  pkgconfig
 BuildRequires:  pkgconfig(augeas)
 BuildRequires:  erlang
 BuildRequires:  erlang-rebar
+Requires:       erlang
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
 %description
