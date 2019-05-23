@@ -17,7 +17,6 @@ BuildRequires:  gcc
 BuildRequires:  pkgconfig
 BuildRequires:  pkgconfig(augeas)
 BuildRequires:  erlang
-BuildRequires:  erlang-rebar
 Requires:       erlang
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
@@ -28,7 +27,7 @@ It is an Erlang bindings for Augeas.
 %setup -q -n %{name}-%{version}
 
 %build
-rebar compile
+make
 
 %install
 for dir in ebin priv ; do
