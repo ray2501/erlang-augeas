@@ -18,7 +18,7 @@
 %%====================================================================
 
 %% @doc Initialize the augeas library
--spec new(Root::string(), Loadpath::string(), Flags::integer()) -> reference() | {error, any()}.
+-spec new(Root::string(), Loadpath::string(), Flags::integer()) -> {ok, reference()} | {error, any()}.
 
 new(_, _, _) ->
     not_loaded(?LINE).
